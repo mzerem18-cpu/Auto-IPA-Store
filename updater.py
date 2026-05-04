@@ -2,44 +2,46 @@ import requests
 import json
 import re
 
-# لینکی لاپەڕەی سەرەکی یارییەکە
+# لێرەدا هەوڵ دەدەین ڕاستەوخۆ دەستمان بگات بە لیستی ئەپەکان
 url = "https://ipasoon.icu/details/AnalogueProCamera"
-
 headers = {
-    "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15"
+    "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
 }
 
+def update_json(link):
+    store_data = {
+        "name": "Auto IPA Store",
+        "identifier": "com.user.store",
+        "apps": [{
+            "name": "Analogue Pro Camera",
+            "bundleIdentifier": "com.cristian.analogue",
+            "version": "14",
+            "downloadURL": link,
+            "iconURL": "https://ipasoon.icu/favicon.ico",
+            "size": 134220000
+        }]
+    }
+    with open("source.json", "w") as f:
+        json.dump(store_data, f, indent=4)
+    print(f"Successfully updated with: {link}")
+
 try:
-    response = requests.get(url, headers=headers)
+    session = requests.Session()
+    response = session.get(url, headers=headers, timeout=15)
     html_content = response.text
     
-    # ئەم کۆدە بەدوای هەر لینکێکدا دەگەڕێت کە بە ipa کۆتایی بێت
-    links = re.findall(r'https?://[^\s<>"]+\.ipa[^\s<>"]*', html_content)
+    # گەڕان بەدوای لینکی IPA لە ناو کۆدەکەدا
+    match = re.search(r'https?://[^\s<>"]+signed\.ipa[^\s<>"]*', html_content)
     
-    if links:
-        # یەکەم لینک کە دەیدۆزێتەوە هەڵیدەبژێرێت
-        fresh_link = links[0].replace('\\', '')
-        print(f"Link Found: {fresh_link}")
-        
-        store_data = {
-          "name": "Auto IPA Store",
-          "identifier": "com.user.store",
-          "apps": [
-            {
-              "name": "Analogue Pro Camera",
-              "bundleIdentifier": "com.cristian.analogue",
-              "version": "14",
-              "downloadURL": fresh_link,
-              "iconURL": "https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/ios/ios.png",
-              "size": 134220000
-            }
-          ]
-        }
-        
-        with open("source.json", "w") as f:
-            json.dump(store_data, f, indent=4)
+    if match:
+        update_json(match.group(0).replace('\\', ''))
     else:
-        print("No IPA link found on page.")
+        # ئەگەر نەدۆزرایەوە، لینکی گشتی بەکاردەهێنین بۆ تاقیکردنەوە
+        print("Link not found, page might be protected.")
+        # لێرەدا دەتوانیت لینکی ئەو فایلە دابنێیت کە پێشتر لە Storm Sniffer دۆزیبووتەوە
+        # تەنها بۆ ئەوەی بزانیت سیستەمەکە ئیش دەکات
+        # update_json("https://ipasoon.icu/js/output/YOUR_CAPTURED_LINK.ipa")
 
 except Exception as e:
     print(f"Error: {e}")
