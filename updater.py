@@ -2,6 +2,7 @@ import requests
 import json
 import re
 
+# لینکی لاپەڕەی سەرەکی یارییەکە
 url = "https://ipasoon.icu/details/AnalogueProCamera"
 
 headers = {
@@ -12,15 +13,16 @@ try:
     response = requests.get(url, headers=headers)
     html_content = response.text
     
-    # گەڕان بەدوای لینکە تازەکەدا
-    match = re.search(r'(https://ipasoon\.icu/js/output/[a-zA-Z0-9_]+\.signed\.ipa)', html_content)
+    # ئەم کۆدە بەدوای هەر لینکێکدا دەگەڕێت کە بە ipa کۆتایی بێت
+    links = re.findall(r'https?://[^\s<>"]+\.ipa[^\s<>"]*', html_content)
     
-    if match:
-        fresh_link = match.group(1)
+    if links:
+        # یەکەم لینک کە دەیدۆزێتەوە هەڵیدەبژێرێت
+        fresh_link = links[0].replace('\\', '')
+        print(f"Link Found: {fresh_link}")
         
-        # دروستکردنی فایلی JSON
         store_data = {
-          "name": "My Auto Store",
+          "name": "Auto IPA Store",
           "identifier": "com.user.store",
           "apps": [
             {
@@ -36,9 +38,8 @@ try:
         
         with open("source.json", "w") as f:
             json.dump(store_data, f, indent=4)
-        print("Done! Link updated.")
     else:
-        print("Link not found on the page.")
+        print("No IPA link found on page.")
 
 except Exception as e:
-    print(f"Error occurred: {e}")
+    print(f"Error: {e}")
