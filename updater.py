@@ -1,46 +1,32 @@
-import requests
 import json
-import re
 
-# لینکی ئەو لاپەڕەیەی کە یارییەکەی تێدایە
-url = "https://ipasoon.icu/details/AnalogueProCamera"
-headers = {
-    "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15"
-}
+# ئەو لینکەی کە تۆ ناردووتە
+direct_link = "https://ipasoon.icu/js/output/a1948f3724874993a3c72db119fab61e_ashte_AnalogueProCamera_14_CristianTeichnerAnalogue.signed.ipa"
 
-try:
-    # ناردنی داواکاری بۆ ماڵپەڕەکە
-    response = requests.get(url, headers=headers, timeout=15)
-    html_content = response.text
-    
-    # گەڕان بەدوای لینکی .ipa لەناو کۆدی ماڵپەڕەکەدا
-    match = re.search(r'https?://[^\s<>"]+\.ipa[^\s<>"]*', html_content)
-    
-    if match:
-        # پاککردنەوەی لینکەکە لە هەر هێمایەکی زیادە
-        fresh_link = match.group(0).replace('\\', '')
-        
-        # دروستکردنی فایلی source.json بە زانیارییە نوێیەکان
-        store_data = {
-            "name": "Auto Store",
-            "identifier": "com.user.store",
-            "apps": [{
+def update_json():
+    # زانیارییەکانی ستۆرەکە
+    store_data = {
+        "name": "Portal Store",
+        "identifier": "com.portal.store",
+        "apps": [
+            {
                 "name": "Analogue Pro Camera",
                 "bundleIdentifier": "com.cristian.analogue",
                 "version": "14",
-                "downloadURL": fresh_link,
+                "versionDate": "2026-05-04",
+                "downloadURL": direct_link,
                 "iconURL": "https://ipasoon.icu/favicon.ico",
-                "size": 134220000
-            }]
-        }
-        
-        # پاشەکەوتکردنی ئەنجامەکە
-        with open("source.json", "w") as f:
-            json.dump(store_data, f, indent=4)
-        
-        print(f"بە سەرکەوتوویی لینکەکە دۆزرایەوە: {fresh_link}")
-    else:
-        print("ببورە، نەمانتوانی لینکەکە لەناو ماڵپەڕەکە بدۆزینەوە. ڕەنگە ماڵپەڕەکە گۆڕابێت.")
-        
-except Exception as e:
-    print(f"هەڵەیەک ڕوویدا: {e}")
+                "size": 134217728,
+                "description": "ئەم ئەپڵیکەیشنە بە ئۆتۆماتیکی نوێکراوەتەوە"
+            }
+        ]
+    }
+
+    # نووسینی زانیارییەکان بۆ ناو فایلی source.json
+    with open("source.json", "w", encoding="utf-8") as f:
+        json.dump(store_data, f, indent=4, ensure_ascii=False)
+    
+    print("فایلی source.json بە سەرکەوتوویی نوێکرایەوە!")
+
+if __name__ == "__main__":
+    update_json()
