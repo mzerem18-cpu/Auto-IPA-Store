@@ -1,32 +1,32 @@
-name: Refresh Temporary Links
+name: Auto Update Store
 
 on:
   schedule:
-    - cron: '0 */2 * * *'
-  workflow_dispatch:
+    - cron: '0 0 * * *' # هەموو شەوێک سەعات ١٢ی شەو خۆی ئیش دەکات
+  workflow_dispatch: # ڕێگەت پێ دەدات خۆت بە دەستیش ئیشی پێ بکەیت
 
 jobs:
-  update-links:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: '3.x'
 
-      - name: Install Requests
+      - name: Install dependencies
         run: pip install requests
 
-      - name: Run Script
+      - name: Run Updater
         run: python updater.py
 
-      - name: Save and Push to GitHub
+      - name: Commit and Push
         run: |
-          git config --global user.name "GitHub Action Bot"
+          git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
           git add source.json
-          git commit -m "Auto-updated IPA link" || echo "No changes"
+          git commit -m "Auto update IPA links" || exit 0
           git push
