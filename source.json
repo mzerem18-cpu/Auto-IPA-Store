@@ -1,1 +1,16 @@
-{}
+{
+    "name": "Portal Store",
+    "identifier": "com.portal.store",
+    "apps": [
+        {
+            "name": "Analogue Pro Camera",
+            "bundleIdentifier": "com.cristian.analogue",
+            "version": "14",
+            "versionDate": "2026-05-04",
+            "downloadURL": "https://ipasoon.icu/js/output/a1948f3724874993a3c72db119fab61e_ashte_AnalogueProCamera_14_CristianTeichnerAnalogue.signed.ipa",
+            "iconURL": "https://ipasoon.icu/favicon.ico",
+            "size": 134217728,
+            "description": "ئەم ئەپڵیکەیشنە بە ئۆتۆماتیکی نوێکراوەتەوە"
+        }
+    ]
+}
